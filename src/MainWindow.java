@@ -119,28 +119,37 @@ public class MainWindow {
 
 
 	protected void updateGrade(Table table) {
-		if(!textActualScore.getText().isEmpty() && !textActualScore.getText().isEmpty()) {
-			double dActualScore = Double.parseDouble(textActualScore.getText());
-			int nIx = 0;
-			while(nIx < table.getItemCount() && Double.parseDouble(table.getItem(nIx).getText(1)) > dActualScore) {
-				nIx++;
+		double dActualScore;
+		try{
+			dActualScore = Double.parseDouble(textActualScore.getText());
+		} catch (NumberFormatException e) {
+			return;
+		} 
+		int nIx = 0;
+		double dMinScore;
+		do{
+			try {
+				dMinScore = Double.parseDouble(table.getItem(nIx).getText(1));
+			} catch (NumberFormatException e) {
+				return;
 			}
-			
-			if(nIx == table.getItemCount()) {
-				lblGradeDisplay.setText("6");	
-			} else {
-				lblGradeDisplay.setText(table.getItem(nIx).getText(0));
-			}
+			nIx++;
+		} while(nIx < table.getItemCount() &&  dMinScore > dActualScore);
+		
+		if(dMinScore > dActualScore) {
+			lblGradeDisplay.setText("6");	
+		} else {
+			lblGradeDisplay.setText(table.getItem(nIx - 1).getText(0));
 		}
 	}
 	
 	private void updateTable(Table table) {
-		String sMaxScore = textMaxScore.getText();
-		if(sMaxScore.isEmpty()) {
+		double dMaxScore;
+		try{
+			dMaxScore = Double.parseDouble(textMaxScore.getText());
+		} catch (NumberFormatException e) {
 			return;
 		}
-		
-		double dMaxScore = Double.parseDouble(sMaxScore);
 		String[] gradeNames = {"1+", "1", "1-", "2+", "2", "2-", "3+", "3", "3-", "4+", "4", "4-", "5"};
 		double[] minPercent = {0.99, 0.97, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.59, 0.51, 0.45, 0.25};
 
