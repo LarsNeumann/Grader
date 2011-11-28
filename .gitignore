@@ -1,2 +1,5 @@
-/bin
-/src/org
+/.settings
+/target
+.classpath
+.project
+
