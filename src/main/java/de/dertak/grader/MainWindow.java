@@ -160,8 +160,13 @@ public class MainWindow {
 			logger.error("Problem at updateTable '{}' solved by return.", e.getMessage(), textMaxScore);
 			return;
 		}
-		String[] gradeNames = {"1+", "1", "1-", "2+", "2", "2-", "3+", "3", "3-", "4+", "4", "4-", "5"};
-		double[] minPercent = {0.99, 0.97, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.59, 0.51, 0.45, 0.25};
+//TODO make scale changeable.
+		//qian
+//		String[] gradeNames = {"1+", "1", "1-", "2+", "2", "2-", "3+", "3", "3-", "4+", "4", "4-", "5"};
+//		double[] minPercent = {0.99, 0.97, 0.95, 0.9, 0.85, 0.8, 0.75, 0.7, 0.65, 0.59, 0.51, 0.45, 0.25};
+		//sandra
+		String[] gradeNames = {"1",  "1-", "1-2", "2+", "2",  "2-", "2-3", "3+", "3", "3-", "3-4", "+4", "4", "4-", "4-5", "5+", "5", "5-", "5-6", "6+", "6"};
+		double[] minPercent = {0.98, 0.94, 0.90,  0.86, 0.82, 0.78, 0.74, 0.70,  0.66, 0.62, 0.58, 0.54, 0.50, 0.48, 0.44, 0.40, 0.36, 0.32, 0.28, 0.24, 0.00};
 
 		table.setRedraw(false);
 		TableItem items[] = table.getItems();
@@ -175,7 +180,9 @@ public class MainWindow {
 		for(int nIx = 0; nIx < gradeNames.length; nIx++) {
 			double dMinPoints = dMaxScore * minPercent[nIx];
 			items[nIx].setText(0, gradeNames[nIx]);
+			//TODO add something Rounding / Formating
 			items[nIx].setText(1, String.valueOf(dMinPoints));
+			logger.debug("Calculated points as String:{} \t as double:{}", String.valueOf(dMinPoints), dMinPoints);
 		}
 		
 		table.setRedraw(true);
