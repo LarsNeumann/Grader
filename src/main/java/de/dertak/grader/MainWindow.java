@@ -1,24 +1,25 @@
 package de.dertak.grader;
 
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class MainWindow {
 	private final Logger logger = LoggerFactory.getLogger(MainWindow.class);
 	protected Shell shlGrader;
-	private Text textMaxScore;
-	private Text textActualScore;
+	private Spinner spnMaxScore;
+	private Spinner spnActualScore;
 	private Label lblGradeDisplay;
 	/**
 	 * Launch the application.
@@ -56,89 +57,100 @@ public class MainWindow {
 	 */
 	protected void createContents() {
 		shlGrader = new Shell();
-		shlGrader.setSize(249, 365);
+		shlGrader.setSize(250, 450);
 		shlGrader.setText("Notenrechner");
 
 		Label lblPointsForGrades = new Label(shlGrader, SWT.NONE);
-		lblPointsForGrades.setBounds(10, 10, 76, 16);
+		lblPointsForGrades.setBounds(10, 10, 80, 16);
 		lblPointsForGrades.setText("Notenspiegel");
 
 		final Table table = new Table(shlGrader, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(10, 32, 109, 289);
+		table.setBounds(10, 32, 110, 360);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
 		TableColumn[] columns = new TableColumn[2];
 		
-		columns[0] = new TableColumn(table, SWT.CENTER);
+		TableColumn tableColumn_1 = new TableColumn(table, SWT.CENTER);
+		tableColumn_1.setWidth(40);
+		columns[0] = tableColumn_1;
 		columns[0].setResizable(false);
 		columns[0].setWidth(45);
 		columns[0].setText("Note");
 		
-		columns[1] = new TableColumn(table, SWT.CENTER);
+		TableColumn tableColumn = new TableColumn(table, SWT.CENTER);
+		tableColumn.setWidth(60);
+		columns[1] = tableColumn;
 		columns[1].setResizable(false);
 		columns[1].setWidth(60);
 		columns[1].setText("Punkte");
 
-		Label lblMaxScore = new Label(shlGrader, SWT.NONE);
-		lblMaxScore.setBounds(125, 10, 66, 16);
-		lblMaxScore.setText("Max Punkte");
-		
-		textMaxScore = new Text(shlGrader, SWT.BORDER | SWT.CENTER);
-		textMaxScore.setText("100");
-		textMaxScore.setBounds(125, 32, 66, 22);
-		textMaxScore.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
+		Label lblMaxScore = new Label(shlGrader, SWT.CENTER);
+		lblMaxScore.setBounds(140, 32, 80, 16);
+		lblMaxScore.setText("maximal");
+
+		spnMaxScore = new Spinner(shlGrader, SWT.BORDER);
+		spnMaxScore.setBounds(140, 54, 80, 24);
+		spnMaxScore.setMaximum(10000);
+		spnMaxScore.setSelection(100);
+		spnMaxScore.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
 				updateTable(table);
 			}
 		});
 
-		Label lblActualScore = new Label(shlGrader, SWT.NONE);
-		lblActualScore.setBounds(126, 67, 97, 16);
-		lblActualScore.setText("Erreichte Punkte");
+		Label lblActualScore = new Label(shlGrader, SWT.CENTER);
+		lblActualScore.setBounds(140, 84, 80, 16);
+		lblActualScore.setText("erreicht");
 
-		textActualScore = new Text(shlGrader, SWT.BORDER | SWT.CENTER);
-		textActualScore.setText("0");
-		textActualScore.setBounds(125, 89, 98, 22);
-		textActualScore.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// TODO Auto-generated method stub
+		spnActualScore = new Spinner(shlGrader, SWT.BORDER);
+		spnActualScore.setBounds(140, 106, 80, 24);
+		spnActualScore.setMaximum(100000);
+		spnActualScore.setDigits(1);
+		spnActualScore.setIncrement(5);
+		spnActualScore.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent arg0) {
 				updateGrade(table);
 			}
 		});
 		
-		Label lblGrade = new Label(shlGrader, SWT.NONE);
-		lblGrade.setBounds(126, 121, 29, 16);
+		Label lblGrade = new Label(shlGrader, SWT.CENTER);
+		lblGrade.setBounds(140, 136, 80, 16);
 		lblGrade.setText("Note");
 
 		lblGradeDisplay = new Label(shlGrader, SWT.CENTER);
+		lblGradeDisplay.setBounds(140, 158, 80, 16);
 		lblGradeDisplay.setFont(SWTResourceManager.getFont("Ubuntu", 9, SWT.BOLD));
-		lblGradeDisplay.setBounds(126, 145, 29, 16);
 		lblGradeDisplay.setText("6");
 
 		updateTable(table);
 		updateGrade(table);
+		
+		Label lblPoints = new Label(shlGrader, SWT.CENTER);
+		lblPoints.setBounds(140, 10, 80, 16);
+		lblPoints.setText("Punkte");
+		
+		
 	}
 
 
 	protected void updateGrade(Table table) {
 		double dActualScore;
 		try{
-			dActualScore = Double.parseDouble(textActualScore.getText());
-		} catch (NumberFormatException e) {
-			logger.error("Problem at updateGrade '{}' solved by return.", e.getMessage(), textActualScore);
+			dActualScore = spnActualScore.getSelection()/Math.pow(10, spnActualScore.getDigits());
+		} catch (SWTException e) {
+			logger.error("Problem at updateGrade '{}' solved by return.", e.getMessage(), spnActualScore);
 			return;
 		} 
 		int nIx = 0;
 		double dMinScore;
 		do{
 			try {
-				dMinScore = Double.parseDouble(table.getItem(nIx).getText(1));
+				String itemText = table.getItem(nIx).getText(1);
+				itemText = itemText.replace(',', '.');
+				dMinScore = Double.parseDouble(itemText);
 			} catch (NumberFormatException e) {
-
+				
 				logger.error("Problem at updateGrade '{}' solved by return.", e.getMessage(), table);
 				return;
 			}
@@ -155,9 +167,9 @@ public class MainWindow {
 	private void updateTable(Table table) {
 		double dMaxScore;
 		try{
-			dMaxScore = Double.parseDouble(textMaxScore.getText());
-		} catch (NumberFormatException e) {
-			logger.error("Problem at updateTable '{}' solved by return.", e.getMessage(), textMaxScore);
+			dMaxScore = spnMaxScore.getSelection()/Math.pow(10, spnMaxScore.getDigits());
+		} catch (SWTException e) {
+			logger.error("Problem at updateTable '{}' solved by return.", e.getMessage(), spnMaxScore);
 			return;
 		}
 		String[] gradeNames = {"1+", "1", "1-", "2+", "2", "2-", "3+", "3", "3-", "4+", "4", "4-", "5"};
@@ -175,10 +187,12 @@ public class MainWindow {
 		for(int nIx = 0; nIx < gradeNames.length; nIx++) {
 			double dMinPoints = dMaxScore * minPercent[nIx];
 			items[nIx].setText(0, gradeNames[nIx]);
-			items[nIx].setText(1, String.valueOf(dMinPoints));
+			items[nIx].setText(1, String.format("%.1f", dMinPoints));
 		}
 		
+		for (TableColumn tc : table.getColumns())
+	        tc.pack();
+
 		table.setRedraw(true);
 	}
-	
 }
